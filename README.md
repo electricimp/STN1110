@@ -2,12 +2,13 @@
 
 This library provides several levels of interfaces for the [STN1110 Multiprotocol OBD II to UART Interpreter](https://www.scantool.net/stn1110.html).
 
-[STN1110 Reference Manual](https://www.scantool.net/scantool/downloads/98/stn1100-frpm.pdf)
-[List of OBD-II PIDs](http://en.wikipedia.org/wiki/OBD-II_PIDs)
+- [STN1110 Reference Manual](https://www.scantool.net/scantool/downloads/98/stn1100-frpm.pdf)
+- [List of OBD-II PIDs](http://en.wikipedia.org/wiki/OBD-II_PIDs)
 
 ### Classes
 
 Three classes are implemented for interacting with the STN1110 over UART with various levels of abstraction.
+
 1. UARTInterface: a low level wrapper for executing commands over UART and reading back results
 2. OBDInterface: a mid level interface for retreiving raw values of OBD-II PIDs
 3. VehicleInterface: a high level interface for accessing common vehicle data like speed, RPM and temperatures.
@@ -18,7 +19,7 @@ An example utilizing VehicleInterface and the Plotly library is provided. The [P
 
 Short examples for each class are provided below
 
-*VehicleInterface*
+**VehicleInterface**
 
 ```squirrel
 car <- VehicleInterface(hardware.uart57)
@@ -30,7 +31,7 @@ car.onError(function(error) {
 })
 ```
 
-*OBDInterface*
+**OBDInterface**
 
 ```squirrel
 obd <- OBDInterface(hardware.uart57)
@@ -46,7 +47,7 @@ read.readPIDOnce(0x015B, function(result) { // PID 015B is hybrid battery pack r
 })
 ```
 
-*UARTInterface*
+**UARTInterface**
 
 ```squirrel
 stn1110 <- OBDInterface(hardware.uart57)
@@ -66,30 +67,58 @@ To instantiate the class, pass in the [imp UART](https://electricimp.com/docs/ap
 
 ### Class Methods
 
-### getEngineRPM(frequency, callback) 
+### VehicleInterface.getEngineRPM(frequency, callback)
 Gets the engine's RPM in units RPM. Callback will be called at frequency Hz.
 
-### getVehicleSpeed(frequency, callback) 
+### VehicleInterface.getVehicleSpeed(frequency, callback) 
 Get the vehicle speed in units km/h. Callback will be called at frequency Hz.
 
-### getThrottlePosition(frequency, callback) 
+### VehicleInterface.getThrottlePosition(frequency, callback) 
 Gets the throttle position as a percentage. Callback will be called at frequency Hz.
 
-### getEngineLoad(frequency, callback) 
+### VehicleInterface.getEngineLoad(frequency, callback) 
 Gets the engine load as a percentage. Callback will be called at frequency Hz.
 
-### getCoolantTemperature(frequency, callback) 
+### VehicleInterface.getCoolantTemperature(frequency, callback) 
 Gets the engine coolant temperature in degrees celsius. Callback will be called at frequency Hz.
 
-### getFuelPressure(frequency, callback) 
+### VehicleInterface.getFuelPressure(frequency, callback) 
 Gets the fuel pressure in kPa. Callback will be called at frequency Hz.
 
-### getIntakeAirTemperature(frequency, callback) 
+### VehicleInterface.getIntakeAirTemperature(frequency, callback) 
 Gets the intake air temperature in degrees celsius. Callback will be called at frequency Hz.
 
-### getEngineRuntime(frequency, callback) 
+### VehicleInterface.getEngineRuntime(frequency, callback) 
 Gets the runtime since engine start in minutes. Callback will be called at frequency Hz.
 
+### VehicleInterface.onError(callback)
+Pass a callback function to be called if an error or timeout occurs while retreiving vehicle data
+
+## OBDInterface Class Usage
+
+### Constructor(uart)
+To instantiate the class, pass in the [imp UART](https://electricimp.com/docs/api/hardware/uart/) that the STN1110 is connected to. The UART will be reconfigured by the constructor for communication with the STN1110.
+
+### Class Methods
+
+### OBDInterface.readPID(pid, frequency, callback)
+Reads a PID with hex id 'pid' at 'frequency' hertz calling 'callback' with the result. Callback is called with one parameter that is a table containing either an "err" key or a "msg" key. If the "err" key is present in the table an error occured during command execution and the corresponding value describes the error. If the "err" key is not present in the table the "msg" key will contain a byte array containing the output bytes of the command.
+
+### OBDInterface.readPIDOnce(pid, callback)
+Reads a PID with hex id 'pid' calling 'callback' with the result. Callback is called with one parameter that is a table containing either an "err" key or a "msg" key. If the "err" key is present in the table an error occured during command execution and the corresponding value describes the error. If the "err" key is not present in the table the "msg" key will a contain byte array containing the output bytes of the command.
+
+## UARTInterface Class Usage
+
+### Constructor(uart)
+To instantiate the class, pass in the [imp UART](https://electricimp.com/docs/api/hardware/uart/) that the STN1110 is connected to. The UART will be reconfigured by the constructor for communication with the STN1110.
+
+### Class Methods
+
+### UARTInterface.execute(command, timeout, callback)
+Executes the command string 'command' with timeout 'timeout' seconds and calls 'callback' with the result. Callback is called with one parameter that is a table containing either an "err" key or a "msg" key. If the "err" key is present in the table an error occured during command execution and the corresponding value describes the error. If the "err" key is not present in the table the "msg" value will contain the result of the command.
+
+### UARTInterface.getElmVersion()
+Returns the version string of the ELM emulator provided by the STN1110 on reset
 
 
 ## License

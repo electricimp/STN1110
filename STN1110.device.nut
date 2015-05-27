@@ -64,7 +64,7 @@ class UARTInterface {
     function getElmVersion() {
         return _elmVersion
     }
-    // Execute the command string 'command' with timeout 'timeout' and call 'callback' if it executes successfully
+    // Executes the command string 'command' with timeout 'timeout' seconds and calls 'callback' with the result
     function execute(command, timeout, callback) {
         local cmd = Command(command, timeout, callback)
         _commandQueue.append(cmd)
