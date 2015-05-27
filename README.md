@@ -9,9 +9,9 @@ This library provides several levels of interfaces for the [STN1110](https://www
 
 Three classes are implemented for interacting with the STN1110 over UART with various levels of abstraction.
 
-1. UARTInterface: a low level wrapper for executing commands over UART and reading back results
-2. OBDInterface: a mid level interface for retrieving raw values of OBD-II PIDs
-3. VehicleInterface: a high level interface for accessing common vehicle data like speed, RPM and temperatures.
+1. `UARTInterface`: a low level wrapper for executing commands over UART and reading back results
+2. `OBDInterface`: a mid level interface for retrieving raw values of OBD-II PIDs
+3. `VehicleInterface`: a high level interface for accessing common vehicle data like speed, RPM and temperatures.
 
 ## Examples
 
