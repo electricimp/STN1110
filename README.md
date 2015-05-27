@@ -10,7 +10,7 @@ This library provides several levels of interfaces for the [STN1110](https://www
 Three classes are implemented for interacting with the STN1110 over UART with various levels of abstraction.
 
 1. UARTInterface: a low level wrapper for executing commands over UART and reading back results
-2. OBDInterface: a mid level interface for retreiving raw values of OBD-II PIDs
+2. OBDInterface: a mid level interface for retrieving raw values of OBD-II PIDs
 3. VehicleInterface: a high level interface for accessing common vehicle data like speed, RPM and temperatures.
 
 ## Examples
@@ -27,7 +27,7 @@ car.getVehicleSpeed(1, function(speed) { // get speed at 1Hz (callback called on
 	server.log("Vehicle is currently travelling at " + speed + "km/h")
 })
 car.onError(function(error) {
-	server.error("Error retreiving vehicle data")
+	server.error("Error retrieving vehicle data")
 })
 ```
 
@@ -92,7 +92,7 @@ Gets the intake air temperature in degrees celsius. Callback will be called at f
 Gets the runtime since engine start in minutes. Callback will be called at frequency Hz.
 
 ### VehicleInterface.onError(callback)
-Pass a callback function to be called if an error or timeout occurs while retreiving vehicle data
+Pass a callback function to be called if an error or timeout occurs while retrieving vehicle data
 
 ## OBDInterface Class Usage
 
