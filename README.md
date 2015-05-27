@@ -1,6 +1,6 @@
 # STN1110
 
-This library provides several levels of interfaces for the [STN1110 Multiprotocol OBD II to UART Interpreter](https://www.scantool.net/stn1110.html).
+This library provides several levels of interfaces for the [STN1110](https://www.scantool.net/stn1110.html) Multiprotocol OBD-II to UART Interpreter.
 
 - [STN1110 Reference Manual](https://www.scantool.net/scantool/downloads/98/stn1100-frpm.pdf)
 - [List of OBD-II PIDs](http://en.wikipedia.org/wiki/OBD-II_PIDs)
@@ -51,7 +51,7 @@ read.readPIDOnce(0x015B, function(result) { // PID 015B is hybrid battery pack r
 
 ```squirrel
 stn1110 <- OBDInterface(hardware.uart57)
-stn1110.execute("AT@1", 1, function(result) {
+stn1110.execute("AT@1", 1, function(result) { // AT@1 command returns device description string
 	if("err" in result) {
 		server.error("Error executing command")
 		return
@@ -115,7 +115,7 @@ To instantiate the class, pass in the [imp UART](https://electricimp.com/docs/ap
 ### Class Methods
 
 ### UARTInterface.execute(command, timeout, callback)
-Executes the command string 'command' with timeout 'timeout' seconds and calls 'callback' with the result. Callback is called with one parameter that is a table containing either an "err" key or a "msg" key. If the "err" key is present in the table an error occured during command execution and the corresponding value describes the error. If the "err" key is not present in the table the "msg" value will contain the result of the command.
+Executes the command string 'command' with timeout 'timeout' seconds and calls 'callback' with the result. Callback is called with one parameter that is a table containing either an "err" key or a "msg" key. If the "err" key is present in the table an error occured during command execution and the corresponding value describes the error. If the "err" key is not present in the table the "msg" value will contain the output of the command.
 
 ### UARTInterface.getElmVersion()
 Returns the version string of the ELM emulator provided by the STN1110 on reset
