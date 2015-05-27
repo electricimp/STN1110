@@ -19,8 +19,8 @@ class Command {
 // Class for interfacing with an STN1110 over UART
 // Enqueues commands and fires callbacks when replies are received or command times out
 class UARTInterface {
-	_UART_SYNC_READ_TIMEOUT = 100000 // somewhat arbitrary magic number determined empirically, number of uart.read() calls to execute before assuming the UART is dead
-	_UART_BAUD = 9600 // UART baud
+    _UART_SYNC_READ_TIMEOUT = 100000 // somewhat arbitrary magic number determined empirically, number of uart.read() calls to execute before assuming the UART is dead
+    _UART_BAUD = 9600 // UART baud
 
     _uart = null // UART the STN1110 is connected to
     _buffer = null // uart receive buffer
@@ -41,22 +41,22 @@ class UARTInterface {
         // reset STN1110
         _uart.write("ATZ\r")
         try {
-        	// handle inconsistency in output between hard and soft reset
-	        local echoOrVersion = _readLineSync()
-	        if(echoOrVersion == "ATZ") {
-	            _elmVersion = _readLineSync() // it was an echo, read the next line for version
-	        } else {
-	            _elmVersion = echoOrVersion // no echo, it's the version
-	        }
-	        _uart.write("ATE0\r") // disable echo
-	        _readLineSync() // read echo of disable echo command
-	        local response
-	        if((response = _readLineSync()) != "OK") { // disable echo failed
-	            throw "Unexpected response when disabling echo '" + response + "'"
-	        }
-	        _eatPromptSync() // eat the prompt
+            // handle inconsistency in output between hard and soft reset
+            local echoOrVersion = _readLineSync()
+            if(echoOrVersion == "ATZ") {
+                _elmVersion = _readLineSync() // it was an echo, read the next line for version
+            } else {
+                _elmVersion = echoOrVersion // no echo, it's the version
+            }
+            _uart.write("ATE0\r") // disable echo
+            _readLineSync() // read echo of disable echo command
+            local response
+            if((response = _readLineSync()) != "OK") { // disable echo failed
+                throw "Unexpected response when disabling echo '" + response + "'"
+            }
+            _eatPromptSync() // eat the prompt
         } catch(error) { // likely something timed out
-        	throw "Error initializing STN1110 UART interface: " + error
+            throw "Error initializing STN1110 UART interface: " + error
         }
         _initialized = true
     }
@@ -93,12 +93,12 @@ class UARTInterface {
     }
     // blocks until it reads a > or times out when uart.read() calls exceed _UART_SYNC_READ_TIMEOUT
     function _eatPromptSync() {
-    	local noDataCount = 0
+        local noDataCount = 0
         while (_uart.read() != '>') {
-        	noDataCount++
-        	if(noDataCount > _UART_SYNC_READ_TIMEOUT) {
-        		throw "UART read timed out while waiting for prompt"
-        	}
+            noDataCount++
+            if(noDataCount > _UART_SYNC_READ_TIMEOUT) {
+                throw "UART read timed out while waiting for prompt"
+            }
         }
     }
     // blocks until it reads a CR with a non empty preceeding line then returns the line, or times out when uart.read() calls exceed _UART_SYNC_READ_TIMEOUT
@@ -111,10 +111,10 @@ class UARTInterface {
                 _buffer += format("%c", char)
                 _buffer = strip(_buffer)
             } else { // no data to read
-            	noDataCount++
-            	if(noDataCount > _UART_SYNC_READ_TIMEOUT) {
-            		throw "UART read timed out while waiting for newline"
-            	}
+                noDataCount++
+                if(noDataCount > _UART_SYNC_READ_TIMEOUT) {
+                    throw "UART read timed out while waiting for newline"
+                }
             }
         }
         if(_buffer.len() > 0) { // read a line with something on it
@@ -160,7 +160,7 @@ class UARTInterface {
 
 // Provides a higher level interface for accessing OBD-II PID data over the STN1110 UART interface
 class OBDInterface extends UARTInterface {
-	// reads a PID with hex id 'pid' at 'frequency' hertz calling 'callback' with the result
+    // reads a PID with hex id 'pid' at 'frequency' hertz calling 'callback' with the result
     function readPID(pid, frequency, callback) {
         readPIDOnce(pid, callback)
         imp.wakeup(1.0/frequency, (function() { readPID(pid, frequency, callback) }).bindenv(this))
@@ -175,7 +175,7 @@ class OBDInterface extends UARTInterface {
             local str_bytes = split(result["msg"], " ")
             local bytes = []
             for(local i = 2; i < str_bytes.len(); i++) { // first two bytes are the PID echoed, ignore them
-            	bytes.append(this._hexToInt(str_bytes[i])) // convert back to ints
+                bytes.append(this._hexToInt(str_bytes[i])) // convert back to ints
             }
             callback({"msg": bytes})
         }).bindenv(this))
@@ -203,8 +203,8 @@ class VehicleInterface extends OBDInterface {
     _errorCallbacks = null // array of subscribed callbacks for error handling
 
     function constructor(uart) {
-    	_errorCallbacks = []
-    	base.constructor(uart)
+        _errorCallbacks = []
+        base.constructor(uart)
     }
     // gets the engine's RPM in units RPM
     function getEngineRPM(frequency, callback) {

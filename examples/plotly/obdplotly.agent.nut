@@ -5,16 +5,16 @@ const PLOTLY_API_KEY = "your plotly api key"
 
 // register the function to handle data messages from the device
 device.on("log", function(log) {
-	local timestamp = plot1.getPlotlyTimestamp();
-	local plot_data = []
-	foreach(k,v in log) {
-		server.log(k + ": " + v) // output data
-		plot_data.append({ // append to plot
-			"name" : k,
+    local timestamp = plot1.getPlotlyTimestamp();
+    local plot_data = []
+    foreach(k,v in log) {
+        server.log(k + ": " + v) // output data
+        plot_data.append({ // append to plot
+            "name" : k,
             "x" : [timestamp],
             "y" : [v]
-		})
-	}
+        })
+    }
     plot1.post(plot_data)
 })
 
