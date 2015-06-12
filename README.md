@@ -48,11 +48,13 @@ stn1110.execute("AT@1", 1, function(result) { // AT@1 command returns device des
 ## VehicleInterface Class Usage
 
 **Constructor(uart)**
+
 To instantiate the class, pass in the [imp UART](https://electricimp.com/docs/api/hardware/uart/) that the STN1110 is connected to. The UART will be reconfigured by the constructor for communication with the STN1110. This is a blocking call that will return when the STN1110 interface is ready to use. This method may throw an exception if initializing the device fails or times out.
 
 ### Class Methods
 
 **VehicleInterface.read(pid, callback)**
+
 Reads a PID once and executes callback with the resulting data. If the PID is in the list of supported PIDs, the callback will be called with a single value in the correct units. If the PID is not supported the callback will be called with a byte array containing the raw result of the request.
 **VehicleInterface.subscribe(pid, callback, period) **
 Reads a PID every 'period' seconds and executes callback with the resulting data. If the PID is in the list of supported PIDs, the callback will be called with a single value in the correct units. If the PID is not supported the callback will be called with a byte array containing the raw result of the request.
@@ -79,20 +81,25 @@ The runtime since engine start in minutes.
 ## STN1110 Class Usage
 
 **Constructor(uart)**
+
 To instantiate the class, pass in the [imp UART](https://electricimp.com/docs/api/hardware/uart/) that the STN1110 is connected to. The UART will be reconfigured by the constructor for communication with the STN1110. This is a blocking call that will return when the STN1110 interface is ready to use. This method may throw an exception if initializing the device fails or times out.
 
 ### Class Methods
 
 **STN1110.execute(command, timeout, callback)**
+
 Executes the command string 'command' with timeout 'timeout' seconds and calls 'callback' with the result. Callback is called with one parameter that is a table containing either an "err" key or a "msg" key. If the "err" key is present in the table an error occured during command execution and the corresponding value describes the error. If the "err" key is not present in the table the "msg" value will contain the output of the command.
 
 **STN1110.reset()**
+
 Performs a soft reset of the STN1110. This is a blocking call that will return when the STN1110 interface is ready to use. This method may throw an exception if initializing the device fails or times out.
 
 **STN1110.getElmVersion()**
+
 Returns the version string of the ELM emulator provided by the STN1110 on reset.
 
 **STN1110.onError(callback)**
+
 Pass a callback function to be called if an error occurs after initialization and no PID callbacks are registered to receive the error.
 
 
