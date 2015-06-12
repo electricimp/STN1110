@@ -56,9 +56,13 @@ To instantiate the class, pass in the [imp UART](https://electricimp.com/docs/ap
 **VehicleInterface.read(pid, callback)**
 
 Reads a PID once and executes callback with the resulting data. If the PID is in the list of supported PIDs, the callback will be called with a single value in the correct units. If the PID is not supported the callback will be called with a byte array containing the raw result of the request.
+
 **VehicleInterface.subscribe(pid, callback, period) **
+
 Reads a PID every 'period' seconds and executes callback with the resulting data. If the PID is in the list of supported PIDs, the callback will be called with a single value in the correct units. If the PID is not supported the callback will be called with a byte array containing the raw result of the request.
+
 **VehicleInterface.unsubcribe(pid) **
+
 Unsubscribes the callback, if any, for PID 'pid' and stops requesting the PID.
 
 ### Supported PIDs
