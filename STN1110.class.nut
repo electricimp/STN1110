@@ -83,7 +83,7 @@ class STN1110 {
         }
     }
 
-    // pass a callback function to be notified of any errors that occur after initialization
+    // Pass a callback function to be called if an error occurs after initialization and no PID callbacks are registered to receive the error
     function onError(callback) {
         _errorCallback = callback;
     }
@@ -330,30 +330,3 @@ class VehicleInterface extends STN1110 {
         return result;
     }
 }
-
-car <- VehicleInterface(hardware.uart57);
-
-
-car.subscribe(car.ENGINE_RPM, function(result) {
-    if("err" in result) {
-        server.error("Error getting RPM")
-        return
-    }
-    server.log("RPM: " + result["msg"])
-}, 1)
-
-car.subscribe(car.VEHICLE_SPEED, function(result) {
-    if("err" in result) {
-        server.error("Error getting speed")
-        return
-    }
-    server.log("Speed: " + result["msg"] + " km/h")
-}, 1)
-
-car.subscribe(car.ENGINE_RUNTIME, function(result) {
-    if("err" in result) {
-        server.error("Error getting runtime")
-        return
-    }
-    server.log("Runtime: " + result["msg"] + " minutes")
-}, 1)
