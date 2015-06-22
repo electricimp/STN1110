@@ -1,6 +1,6 @@
 # STN1110
 
-This library two levels of interfaces for the [STN1110](https://www.scantool.net/stn1110.html) Multiprotocol OBD-II to UART Interpreter.
+This library provides an interface to the [STN1110](https://www.scantool.net/stn1110.html) Multiprotocol OBD-II to UART Interpreter.
 
 - [STN1110 Reference Manual](https://www.scantool.net/scantool/downloads/98/stn1100-frpm.pdf)
 - [List of OBD-II PIDs](http://en.wikipedia.org/wiki/OBD-II_PIDs)
@@ -10,7 +10,7 @@ This library two levels of interfaces for the [STN1110](https://www.scantool.net
 Two classes are implemented for interacting with the STN1110 over UART.
 
 1. `STN1110`: a low level wrapper for executing commands over UART and reading back results from the STN1110
-3. `VehicleInterface`: a high level interface for accessing common vehicle data like speed, RPM, temperatures or other OBD-II PIDs.
+3. `VehicleInterface`: a high level interface for accessing common vehicle data like speed, RPM, temperatures or other arbitrary OBD-II PIDs.
 
 ## Examples
 
