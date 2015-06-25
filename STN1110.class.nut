@@ -80,8 +80,8 @@ class STN1110 {
     }
     
     // Sets the baud rate to 'baud'.
-    // This is a blocking call, when it returns the STN1110 is now operating at the new baud rate, unless an error is thrown.
-    // Errors will be thrown if commands are currently executing, if the baud rate is deemed invalid by the STN1110 or if another error occurs while setting the baud rate.
+    // This is a blocking call, when it returns the STN1110 is now operating at the new baud rate, unless an exception is thrown.
+    // Errors will be thrown if commands are currently executing, if the baud rate is deemed invalid by the STN1110 or if another exception occurs while setting the baud rate.
     function setBaudRate(baud) {
         if(_activeCommand != null || _commandQueue.len() > 0) {
             throw "Cannot change baud rate while commands are executing"

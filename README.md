@@ -47,9 +47,9 @@ stn1110.execute("AT@1", 1, function(result) { // AT@1 command returns device des
 
 ## VehicleInterface Class Usage
 
-**Constructor(uart)**
+**Constructor(uart, [baud])**
 
-To instantiate the class, pass in the [imp UART](https://electricimp.com/docs/api/hardware/uart/) that the STN1110 is connected to. The UART will be reconfigured by the constructor for communication with the STN1110. This is a blocking call that will return when the STN1110 interface is ready to use. This method may throw an exception if initializing the device fails or times out.
+To instantiate the class, pass in the [imp UART](https://electricimp.com/docs/api/hardware/uart/) that the STN1110 is connected to. The UART will be reconfigured by the constructor for communication with the STN1110. This is a blocking call that will return when the STN1110 interface is ready to use. This method may throw an exception if initializing the device fails or times out. The optional baud parameter can be used for initial connection if the STN1110 has a baud rate other than the default 9600 stored in it's EEPROM.
 
 ### Class Methods
 
@@ -98,9 +98,9 @@ The runtime since engine start in minutes.
 
 ## STN1110 Class Usage
 
-**Constructor(uart)**
+**Constructor(uart, [baud])**
 
-To instantiate the class, pass in the [imp UART](https://electricimp.com/docs/api/hardware/uart/) that the STN1110 is connected to. The UART will be reconfigured by the constructor for communication with the STN1110. This is a blocking call that will return when the STN1110 interface is ready to use. This method may throw an exception if initializing the device fails or times out.
+To instantiate the class, pass in the [imp UART](https://electricimp.com/docs/api/hardware/uart/) that the STN1110 is connected to. The UART will be reconfigured by the constructor for communication with the STN1110. This is a blocking call that will return when the STN1110 interface is ready to use. This method may throw an exception if initializing the device fails or times out. The optional baud parameter can be used for initial connection if the STN1110 has a baud rate other than the default 9600 stored in it's EEPROM.
 
 ### Class Methods
 
@@ -111,6 +111,14 @@ Executes the command string 'command' with timeout 'timeout' seconds and calls '
 **STN1110.reset()**
 
 Performs a soft reset of the STN1110. This is a blocking call that will return when the STN1110 interface is ready to use. This method may throw an exception if initializing the device fails or times out.
+
+**STN1110.setBaudRate(baud)**
+
+Sets the baud rate to 'baud'. This is a blocking call, when it returns the STN1110 is now operating at the new baud rate, unless an exception is thrown. Exceptions will be thrown if commands are currently executing, if the baud rate is deemed invalid by the STN1110 or if another error occurs while setting the baud rate.
+
+**STN1110.getBaudRate()**
+
+ Returns the baud rate the uart interface is currently operating at
 
 **STN1110.getElmVersion()**
 
