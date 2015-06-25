@@ -6,7 +6,6 @@
 // Enqueues commands and fires callbacks when replies are received or command times out
 class STN1110 {
     
-    _UART_BAUD = 9600; // UART baud
     _UART_TIMEOUT = 1; // UART sync read timeout in seconds
     _UART_MAX_BUFFER_LENGTH = 4096; // 4kB max buffer size before an error is thrown
     _NEWLINE = "\r";
@@ -15,11 +14,13 @@ class STN1110 {
     _END_OF_PACKET = "\r\r>";
     _COMMAND_RESET = "ATZ";
     _COMMAND_DISABLE_ECHO = "ATE0";
-    _DISABLE_ECHO_REPLY = "OK";
+    _COMMAND_SET_BAUD_RATE = "STBR";
+    _COMMAND_SUCCESS_REPLY = "OK";
     _END_OF_TRANSMISSION = 0x04;
     _PID_REPLY_MODE_OFFSET = 0x40; // PID responses have the mode offset by 0x40 from the request
 
     _uart = null; // UART the STN1110 is connected to
+    _uartCurrentBaud = null; // baud rate the UART is currently running at
     _uartReadTimeoutStart = null; // hardware.millis() that sync read timeouts are measured from
     _buffer = null; // UART recieve buffer
     _commandQueue = null; // queue of Command objects awaiting execution
@@ -31,12 +32,15 @@ class STN1110 {
     // Constructs a new instance of STN1110
     // This WILL reset your UART configuration for the supplied uart parameter
     // When this method returns the UART interface is ready to use, unless an error is thrown
-    constructor(uart) {
+    // Optional baud parameter can be used for initial connection if the STN1110 has a baud rate
+    // other than the default 9600 stored in it's EEPROM
+    constructor(uart, baud=9600) {
         _initialized = false;
         _buffer = "";
         _commandQueue = [];
         _uart = uart;
-        _uart.configure(_UART_BAUD, 8, PARITY_NONE, 1, NO_CTSRTS, _uartCallback.bindenv(this)); // configure uart, register callback
+        _uartCurrentBaud = baud;
+        _uart.configure(baud, 8, PARITY_NONE, 1, NO_CTSRTS, _uartCallback.bindenv(this)); // configure uart, register callback
         reset(); // reset STN1110
         _initialized = true;
     }
@@ -56,7 +60,7 @@ class STN1110 {
             _uart.write(_COMMAND_DISABLE_ECHO + _NEWLINE); // disable echo
             _readLineSync(); // read echo of disable echo command
             local response;
-            if((response = _readLineSync()) != _DISABLE_ECHO_REPLY) { // disable echo failed
+            if((response = _readLineSync()) != _COMMAND_SUCCESS_REPLY) { // disable echo failed
                 throw "Unexpected response when disabling echo '" + response + "'";
             }
             _eatPromptSync(); // eat the prompt
@@ -65,9 +69,38 @@ class STN1110 {
         }
     }
 
-    // returns the version string of the ELM emulator provided by the STN1110 on reset
+    // Returns the version string of the ELM emulator provided by the STN1110 on reset
     function getElmVersion() {
         return _elmVersion;
+    }
+    
+    // Returns the baud rate the uart interface is currently operating at
+    function getBaudRate() {
+        return _uartCurrentBaud;
+    }
+    
+    // Sets the baud rate to 'baud'.
+    // This is a blocking call, when it returns the STN1110 is now operating at the new baud rate, unless an error is thrown.
+    // Errors will be thrown if commands are currently executing, if the baud rate is deemed invalid by the STN1110 or if another error occurs while setting the baud rate.
+    function setBaudRate(baud) {
+        if(_activeCommand != null || _commandQueue.len() > 0) {
+            throw "Cannot change baud rate while commands are executing"
+        }
+        _uart.write(_COMMAND_SET_BAUD_RATE + " " + baud + _NEWLINE); // write set baud rate command
+        if(_readLineSync() != _COMMAND_SUCCESS_REPLY) { // STN1110 will reply OK if the baud rate is valid
+            throw "Error setting baud rate to '" + baud + "'";
+        }
+        // reconfigure our uart
+        _uart.configure(baud, 8, PARITY_NONE, 1, NO_CTSRTS, _uartCallback.bindenv(this)); // reconfigure uart, register callback
+        _uart.write(_NEWLINE) // write newline so the STN1110 knows the baud rate change was successful
+        _readLineSync() // read STN1110 version string
+        if(_readLineSync() != _COMMAND_SUCCESS_REPLY) { // make sure we can receive OK from the STN1110
+            // try to restore to previous baud then throw error
+            _uart.configure(_uartCurrentBaud, 8, PARITY_NONE, 1, NO_CTSRTS, _uartCallback.bindenv(this));
+            throw "Error setting baud rate to '" + baud + "'";
+        }
+        // everything went well, keep track of the new baud
+        _uartCurrentBaud = baud;
     }
 
     // Executes the command string 'command' with timeout 'timeout' seconds and calls 'callback' with the result
