@@ -94,8 +94,8 @@ class STN1110 {
     function _executeNextInQueue() {
         if(_commandQueue.len() > 0) {
             _activeCommand = _commandQueue.remove(0);
-            _activeCommand["timer"] <- imp.wakeup(_activeCommand["timeout"], _handleTimeout.bindenv(this));
-            _uart.write(_activeCommand["command"] + _NEWLINE);
+            _activeCommand.timer <- imp.wakeup(_activeCommand.timeout, _handleTimeout.bindenv(this));
+            _uart.write(_activeCommand.command + _NEWLINE);
         }
     }
 
@@ -104,7 +104,7 @@ class STN1110 {
         if(_activeCommand == null) {
             return;
         }
-        imp.cancelwakeup(_activeCommand["timer"]);
+        imp.cancelwakeup(_activeCommand.timer);
         _activeCommand = null;
     }
 
@@ -177,8 +177,8 @@ class STN1110 {
 
     // call the callback for a received packet then move on or report an error if one is not registered
     function _parse(packet) {
-        if(_activeCommand != null && "callback" in _activeCommand && _activeCommand["callback"] != null) { // make sure there is something to call
-            _activeCommand["callback"]({"msg" : packet}); // execute the callback
+        if(_activeCommand != null && "callback" in _activeCommand && _activeCommand.callback != null) { // make sure there is something to call
+            _activeCommand.callback({"msg" : packet}); // execute the callback
             // execute next command
             _clearActiveCommand();
             _executeNextInQueue();
@@ -189,8 +189,8 @@ class STN1110 {
 
     // command timeout handler 
     function _handleTimeout() {
-        if(_activeCommand != null && "callback" in _activeCommand && _activeCommand["callback"] != null) {
-            _activeCommand.callback({"err": "command '" + _activeCommand["command"] + "' timed out"}); // callback with error
+        if(_activeCommand != null && "callback" in _activeCommand && _activeCommand.callback != null) {
+            _activeCommand.callback({"err": "command '" + _activeCommand.command + "' timed out"}); // callback with error
         }
         _uart.write(_END_OF_TRANSMISSION); // send EOT char to kill command
         // execute next command
